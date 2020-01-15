@@ -6,34 +6,34 @@ const router = express.Router()
 
 function restricted() {
     return async (req, res, next) => {
-        try {
-            const authError = {
-                message: "Invalid Credentials, please Log In"
-            }
-
+      try {
+  
+        const authError = {
+          message: "Invalid credentials"
+        }
+  
         const { username, password } = req.headers
         if(!username || !password) {
-            return res.status(401).json(authError)
+          return res.status(401).json(authError)
         }
-
-        const user = await usersModel.findById({ username }).first()
-
+  
+        const user = await usersModel.findBy({ username }).first()
+  
         if(!user) {
-            return res.status(401).json(authError)
+          return res.status(401).json(authError)
         }
-
+  
         const passwordValid = await bcrypt.compare(password, user.password)
-
-        if(!passwordValid) {
-            return res.status(401).json(authError)
+        
+        if (!passwordValid) {
+          return res.status(401).json(authError)
         }
-
         next()
-        } catch(err) {
-            next(err)
-        }
+      } catch (err) {
+        next(err)
+      }
     }
-}
+  }
 
 router.get("/", restricted(), async(req, res, next) => {
     try{
