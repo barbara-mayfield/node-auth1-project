@@ -38,4 +38,18 @@ router.post("/login", async (req, res, next) => {
   }
 })
 
+router.get("/protected", restricted(), async (req, res, next) => {
+  try {
+    console.log(req.headers)
+
+    if(!req.session || !req.session.user) {
+      return res.status(404).json({
+        message: "Unauthorized, please log in."
+      })
+    }
+  } catch(err) {
+    next(err)
+  }
+})
+
 module.exports = router;
